@@ -53,17 +53,17 @@ let ans = canVote(19);
 
 // If/Else
 if (age >= 18 ) {
-    console.log("You are an adult");
+    // console.log("You are an adult");
 } else {
-    console.log("You are a minor");
+    // console.log("You are a minor");
 }
 
 // Assignment
 function isEven(num) {
     if( num%2 == 0 ) {
-        console.log("The number is even");
+        // console.log("The number is even");
     } else {
-        console.log("The number is odd");
+        // console.log("The number is odd");
     }
 }
 
@@ -79,4 +79,90 @@ function sumTillNumber(num) {
     return sum;
 }
 
-console.log(sumTillNumber(10));
+// console.log(sumTillNumber(10));
+
+// Objects
+let user = {
+    name: "Ishav",
+    age: 21,
+    gender: "Male"
+}
+
+// console.log(user1.name);
+// console.log(user1["name"]);
+// console.log(user1.age);
+
+// Objects Assignment #1
+function greetUser(user) {
+    console.log(`Hi ${user.name}, your age is ${user.age}`);
+}
+
+// greetUser(user);
+
+// Assignment #2 & #3
+function greetUserWithGender(user) {
+    if (user.gender === "Male") {
+        if (user.age >= 18) {
+            console.log(`Hi Mr ${user.name}, your age is ${user.age}. You are legal to vote`);
+        } else {
+            console.log(`Hi Mr ${user.name}, your age is ${user.age}. You are not legal to vote`);
+        }
+    } else if (user.gender === "Female") {
+        if (user.age >= 18) {
+            console.log(`Hi Mrs ${user.name}, your age is ${user.age}. You are legal to vote`);
+        } else {
+            console.log(`Hi Mrs ${user.name}, your age is ${user.age}. You are not legal to vote`);
+        }
+    } else {
+        if (user.age >= 18) {
+            console.log(`Hi Others ${user.name}, your age is ${user.age}. You are legal to vote`);
+        } else {
+            console.log(`Hi Others ${user.name}, your age is ${user.age}. You are not legal to vote`);
+        }
+    }
+}
+
+// greetUserWithGender(user);
+
+// Arrya of Objects
+const users = [{
+    name: "ishav",
+    age: 21,
+    gender: "male"
+}, {
+    name: "priya",
+    age: 20,
+    gender: "female"
+}, {
+    name: "harkirat",
+    age: 27,
+    gender: "male"
+}]
+
+const user1 = users[0];
+// console.log(user1);
+const user1Age = users[0].age;
+// console.log(user1Age);
+
+// Assignment
+// by using to the new array
+function userAbove18(users) {
+    let finalUsers = [];
+    for(let i=0; i<users.length; i++) {
+        if (users[i].age > 18 && users[i].gender === "male") {
+            finalUsers.push(users[i]);
+        }   
+    }
+    return finalUsers;
+}
+
+userAbove18(users);
+// console.log(finalUsers);
+
+// using filter
+function filterUsers(users) {
+    return users.filter(user => user.age > 18 && user.gender === "male");
+}
+
+const filteredUsers = filterUsers(users);
+// console.log(filteredUsers);
