@@ -1,1 +1,1 @@
-hello from b.txt file
+hi there from b.txt
