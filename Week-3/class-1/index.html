@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Todoist</title>
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <h1>Todo List</h1>
+    
+    <div id="todos">
+      <div id="todo-1">
+        <h4>1. Take Class</h4>
+        <button onclick="deleteTodo(1)">Delete</button>
+      </div>
+      <div id="todo-2">
+        <h4>2. Go out to eat</h4>
+        <button onclick="deleteTodo(2)">Delete</button>
+      </div>
+    </div> 
+
+    <div>
+      <input id="inp" type="text" />
+      <button onclick="addTodo()" >Add Todo</button>
+    </div>
+  </body>
+
+  
+  <script>
+    function addTodo() {
+      const inputElement = document.getElementById("inp");
+      const textNode = document.createElement("div");
+      textNode.innerHTML = inputElement.value;
+      const parentElement = document.getElementById("todos");
+      parentElement.appendChild(textNode);
+    } 
+
+    function deleteTodo(index) {
+      const element = document.getElementById(`todo-${index}`);
+      element.parentNode.removeChild(element);
+    } 
+  </script>
+ </html>
