@@ -2,8 +2,9 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
-const { userModel } = require("../db");
+const { userModel, courseModel, purchaseModel } = require("../db");
 const { JWT_USER_PASSWORD } = require("../config");
+const { userMiddleware } = require("../middleware/user");
 
 const userRouter = express.Router();
 
@@ -66,11 +67,11 @@ userRouter.post("/signin", async function(req, res) {
                 message: "User signed in successfully",
                 token: token
             })
+        } else {
+            res.status(404).json({
+                message: "Incorrect credentials"
+            })
         }
-
-        res.status(403).json({
-            message: "Incorrect credentials"
-        })
     } catch (error) {
         res.status(500).json({
             message: "Error while signing in the user"
@@ -78,10 +79,34 @@ userRouter.post("/signin", async function(req, res) {
     }
 });
 
-userRouter.get("/purchases", function(req, res) {
-    res.json({
-        message: "Purchased courses endpoint"
-    })
+userRouter.get("/purchases", userMiddleware, async function(req, res) {
+    try {
+        const userId = req.userId;
+
+        const purchases = await purchaseModel.find({
+            userId,
+        })
+
+        if(purchases) {
+            const courseData = await courseModel.find({
+                _id: { $in: purchases.map(x => x.courseId) }
+            })
+
+            res.json({
+                message: "Your purchased courses fetched successfully",
+                purchases,
+                courseData
+            })
+        } else {
+            res.status(404).json({
+                message: "You have not purchased any courses"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error while fetching the courses"
+        })
+    }
 });
 
 module.exports = {

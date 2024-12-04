@@ -43,7 +43,8 @@ adminRouter.post("/signup", async function(req, res) {
         })
     } catch (error) {
         res.status(500).json({
-            message: "Error while signing up the admin"
+            message: "Error while signing up the admin",
+            error: error
         })
     }
 });
@@ -64,17 +65,19 @@ adminRouter.post("/signin", async function(req, res) {
             }, JWT_ADMIN_PASSWORD);
             
             res.json({
-                message: "Signed in successfully", 
+                message: "Admin signed in successfully",
                 token: token
+            })
+        } else {
+            res.status(404).json({
+                message: "Incorrect credentials"
             })
         }
 
-        res.status(404).json({
-            message: "Incorrect credentials"
-        })
     } catch (error) {
         res.status(500).json({
-            message: "Error while signing in the admin"
+            message: "Error while signing in the admin",
+            error: error
         })
     }
 });
@@ -99,7 +102,8 @@ adminRouter.post("/course", adminMiddleware, async function(req, res) {
         })
     } catch (error) {
         res.status(500).json({
-            message: "Error while creating the course"
+            message: "Error while creating the course",
+            error: error
         })
     }
 });
@@ -110,7 +114,7 @@ adminRouter.put("/course", adminMiddleware, async function(req, res) {
 
         const { courseId , title, description, price, imageUrl } = req.body;
 
-        const updatedCourse =  await courseModel.updateOne({
+        const updatedCourse =  await courseModel.findOneAndUpdate({
             _id: courseId,
             creatorId: adminId
         }, {
@@ -120,28 +124,71 @@ adminRouter.put("/course", adminMiddleware, async function(req, res) {
             imageUrl: imageUrl
         })   
         
-        res.json({
-            message: "Course updated successfully",
-            courseId: updatedCourse._id
-        })
+        if (updatedCourse) {
+            res.json({
+                message: "Course updated successfully",
+                courseId: updatedCourse._id
+            })
+        } else {
+            res.status(403).json({
+                message: "You don't have access to this course"
+            })
+        }
 
     } catch (error) {
         res.status(500).json({
-            message: "Error while updating the course"
+            message: "Error while updating the course",
+            error: error
         })
     }
 });
 
-adminRouter.delete("/course", function(req, res) {
-    res.json({
-        message: "Delete course endpoint"
-    })
+adminRouter.delete("/course", adminMiddleware, async function(req, res) {
+    try {
+        const adminId = req.userId;
+        const courseId = req.body.courseId;
+
+        const deletedCourse = await courseModel.findOneAndDelete({
+            _id: courseId,
+            creatorId: adminId
+        })
+
+        if (deletedCourse) {
+            res.json({
+                message: "Course deleted successfully",
+                courseId: updatedCourse._id
+            })
+        } else {
+            res.status(403).json({
+                message: "You don't have access to this course"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error while deleting the course",
+            error: error
+        })
+    }
 });
 
-adminRouter.get("/course/bulk", function(req, res) {
-    res.json({
-        message: "Get all courses endpoint"
-    })
+adminRouter.get("/course/bulk", adminMiddleware, async function(req, res) {
+    try {
+        const adminId = req.userId;
+
+        const courses = await courseModel.find({
+            creatorId: adminId
+        })
+
+        res.json({
+            message: "Course deleted successfully",
+            courses: courses
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Error while deleting the course",
+            error: error
+        })
+    }
 });
 
 module.exports = {
