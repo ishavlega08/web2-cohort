@@ -2,9 +2,9 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
-const { adminModel } = require("../db");
-
-const JWT_ADMIN_PASSWORD = "adminsecr3t";
+const { adminModel, courseModel } = require("../db");
+const { JWT_ADMIN_PASSWORD } = require("../config");
+const { adminMiddleware } = require("../middleware/admin");
 
 const adminRouter = express.Router();
 
@@ -79,16 +79,57 @@ adminRouter.post("/signin", async function(req, res) {
     }
 });
 
-adminRouter.post("/course", function(req, res) {
-    res.json({
-        message: "Create course endpoint"
-    })
+adminRouter.post("/course", adminMiddleware, async function(req, res) {
+    try {
+        const adminId = req.userId;
+
+        const { title, description, price, imageUrl } = req.body;
+
+        const course = await courseModel.create({
+            title: title,
+            description: description,
+            price: price,
+            imageUrl: imageUrl,
+            creatorId: adminId
+        })
+
+        res.json({
+            message: "Course created successfully",
+            courseId: course._id
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Error while creating the course"
+        })
+    }
 });
 
-adminRouter.put("/course", function(req, res) {
-    res.json({
-        message: "Add course content endpoint"
-    })
+adminRouter.put("/course", adminMiddleware, async function(req, res) {
+    try {
+        const adminId = req.userId;
+
+        const { courseId , title, description, price, imageUrl } = req.body;
+
+        const updatedCourse =  await courseModel.updateOne({
+            _id: courseId,
+            creatorId: adminId
+        }, {
+            title: title,
+            description: description,
+            price: price,
+            imageUrl: imageUrl
+        })   
+        
+        res.json({
+            message: "Course updated successfully",
+            courseId: updatedCourse._id
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error while updating the course"
+        })
+    }
 });
 
 adminRouter.delete("/course", function(req, res) {
@@ -104,5 +145,6 @@ adminRouter.get("/course/bulk", function(req, res) {
 });
 
 module.exports = {
-    adminRouter: adminRouter
+    adminRouter: adminRouter,
+    JWT_ADMIN_PASSWORD: JWT_ADMIN_PASSWORD
 }

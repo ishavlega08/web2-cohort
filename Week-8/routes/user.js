@@ -3,8 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 const { userModel } = require("../db");
-
-const JWT_USER_PASSWORD = "usersecr3t";
+const { JWT_USER_PASSWORD } = require("../config");
 
 const userRouter = express.Router();
 
@@ -86,5 +85,6 @@ userRouter.get("/purchases", function(req, res) {
 });
 
 module.exports = {
-    userRouter: userRouter
+    userRouter: userRouter,
+    JWT_USER_PASSWORD: JWT_USER_PASSWORD
 }
