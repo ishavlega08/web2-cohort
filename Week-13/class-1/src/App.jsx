@@ -1,19 +1,20 @@
-import { Button } from "./components/Button"
-import { Input } from "./components/Input"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { VerifyYourAge } from "./components/VerifyAge";
+import { Signup } from "./components/Signup";
+import { Otp } from "./components/Otp";
+import { Dashboard } from "./components/Dashboard";
 
 function App() {
 
   return (
-    <>
-      <div className="h-screen bg-blue-700 flex flex-col justify-center items-center">
-        <div>
-          <Input type={"text"} placeholder={"Email"} />
-        </div>
-        <div className="mt-8">
-          <Button color={"bg-blue-500"}>Sign up</Button>
-        </div>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<VerifyYourAge />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/otp" element={<Otp number={6} />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
